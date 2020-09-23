@@ -1,0 +1,32 @@
+name: Test Splinter
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  unit_test_splinter:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Unit Test Splinter
+        run: docker-compose -f tests/test-splinter.yaml up --abort-on-container-exit unit-test-splinter
+
+  gameroom_tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Gameroom Tests
+        run: docker-compose -f examples/gameroom/tests/docker-compose.yaml up --abort-on-container-exit
+
+  gameroom_ui_tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Gameroom UI Tests
+        run: docker-compose -f examples/gameroom/tests/cypress/docker-compose.yaml up --abort-on-container-exit
