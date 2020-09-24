@@ -1,0 +1,79 @@
+name: Publish Docker Images
+
+on:
+  workflow_run:
+    workflows: ["Test Splinter", "Lint Splinter"]
+    types:
+      - completed
+# CHANGE THE BRANCH BOYEEEEEEEEEEE
+jobs:
+  publish_docker_images:
+    if: >-
+      github.event.workflow_run.conclusion == 'success' &&
+      github.event.workflow_run.event == 'push' &&
+      github.event.workflow_run.head_branch == 'master'
+    runs-on: ubuntu-latest
+    steps:
+      # # Linting
+      # - name: Wait For Lint Gameroom Client Check
+      #   uses: lewagon/wait-on-check-action@v0.1
+      #   with:
+      #     ref: ${{ github.sha }}
+      #     check-name: "lint_gameroom_client"
+      #     repo-token: ${{ secrets.GITHUB_TOKEN }}
+      #     wait-interval: 10 # seconds
+
+      # - name: Wait For Lint Splinter Check
+      #   uses: lewagon/wait-on-check-action@v0.1
+      #   with:
+      #     ref: ${{ github.sha }}
+      #     check-name: "lint_splinter"
+      #     repo-token: ${{ secrets.GITHUB_TOKEN }}
+      #     wait-interval: 10 # seconds
+
+      # - name: Wait For Splinter Clippy Check
+      #   uses: lewagon/wait-on-check-action@v0.1
+      #   with:
+      #     ref: ${{ github.sha }}
+      #     check-name: "run_clippy_on_splinter"
+      #     repo-token: ${{ secrets.GITHUB_TOKEN }}
+      #     wait-interval: 10 # seconds
+
+      # # Tests
+      # - name: Wait For Splinter Unit Tests Check
+      #   uses: lewagon/wait-on-check-action@v0.1
+      #   with:
+      #     ref: ${{ github.sha }}
+      #     check-name: "unit_test_splinter"
+      #     repo-token: ${{ secrets.GITHUB_TOKEN }}
+      #     wait-interval: 10 # seconds
+
+      # - name: Wait For Gameroom Tests Check
+      #   uses: lewagon/wait-on-check-action@v0.1
+      #   with:
+      #     ref: ${{ github.sha }}
+      #     check-name: "gameroom_tests"
+      #     repo-token: ${{ secrets.GITHUB_TOKEN }}
+      #     wait-interval: 10 # seconds
+
+      # - name: Wait For Gameroom UI Tests Check
+      #   uses: lewagon/wait-on-check-action@v0.1
+      #   with:
+      #     ref: ${{ github.sha }}
+      #     check-name: "gameroom_ui_tests"
+      #     repo-token: ${{ secrets.GITHUB_TOKEN }}
+      #     wait-interval: 10 # seconds
+
+      - name: Login to DockerHub
+        uses: docker/login-action@v1
+        with:
+          username: ${{ secrets.DOCKER_HUB_USERNAME }}
+          password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
+
+      - uses: actions/checkout@v2
+
+      - name: Publish branch to dockerhub
+        run: docker-compose -f docker-compose-installed.yaml build
+        env:
+          NAMESPACE: splintercommunity/
+          VERSION: AUTO_STRICT
