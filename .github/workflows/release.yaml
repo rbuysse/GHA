@@ -1,0 +1,29 @@
+name: Release Splinter
+
+on:
+  release:
+    types: [created]
+
+jobs:
+  publish_release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Login to DockerHub
+        uses: docker/login-action@v1
+        with:
+          username: ${{ secrets.DOCKER_HUB_USERNAME }}
+          password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
+
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+
+      - name: Publish release to dockerhub
+        run: ./ci/publish-docker
+        env:
+          NAMESPACE: rbuysse/
+          VERSION: AUTO_STRICT
+
+      - name: Publish release to crates
+        #run: ./ci/publish-crates
+        run: git status
