@@ -1,7 +1,7 @@
 
 ![Hyperledger Sawtooth](images/sawtooth_logo_light_blue-small.png)
 
-# Sawtooth Sabre
+# Sawtooth Sabeer
 
 Sawtooth Sabre is a transaction family which implements on-chain smart contracts
 executed in a WebAssembly virtual machine. This distributed application runs on
